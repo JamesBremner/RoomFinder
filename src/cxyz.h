@@ -45,7 +45,7 @@ public:
         return cxyz(
             y * other.z - z * other.y,
             z * other.x - x * other.z,
-            x * other.y - y * other.z);
+            x * other.y - y * other.x);
     }
 
     double dot(const cxyz &other)
@@ -69,7 +69,7 @@ public:
         cxyz crossall = p0.vect(p1).cross(p0.vect(p2));
         cxyz crossu = p0.vect(p2).cross(lb.vect(la));
         cxyz crossv = lb.vect(la).cross(p0.vect(p1));
-        cxyz lap0(la.x - p0.x, la.y - p0.y, la.z - p0.x);
+        cxyz lap0(la.x - p0.x, la.y - p0.y, la.z - p0.z);
         double divisor = lb.vect(la).dot(crossall);
         double t = crossall.dot(lap0) / divisor;
         double u = crossu.dot(lap0) / divisor;
