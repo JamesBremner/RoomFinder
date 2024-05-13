@@ -68,7 +68,7 @@ public:
     {
         cxyz crossall = p0.vect(p1).cross(p0.vect(p2));
         cxyz crossu = p0.vect(p2).cross(lb.vect(la));
-        cxyz crossv = lb.vect(la).cross(p0.vect(p2));
+        cxyz crossv = lb.vect(la).cross(p0.vect(p1));
         cxyz lap0(la.x - p0.x, la.y - p0.y, la.z - p0.x);
         double divisor = lb.vect(la).dot(crossall);
         double t = crossall.dot(lap0) / divisor;
