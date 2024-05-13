@@ -4,7 +4,7 @@ VPATH = ./src
 	# compiler include search paths
 INCS = -I./include \
 	-I../windex/include \
-	-I../raven-set \
+
 
 LIBS = \
 	-lgdiplus -lgdi32 -lcomdlg32 -lstdc++fs \
@@ -24,7 +24,7 @@ OBJ_starter = \
 
 ### COMPILE
 
-$(ODIR)/%.o: %.cpp  
+$(ODIR)/%.o: %.cpp cxyz.h
 	g++ $< \
 	-c -o $@  $(INCS) $(CCflags)
 
