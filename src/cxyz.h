@@ -5,6 +5,7 @@ class cxyz
 public:
     double x, y, z;
 
+    // default constructor creates invalid point
     cxyz()
         : x(-DBL_MAX),
           y(-DBL_MAX),
@@ -55,13 +56,14 @@ public:
                z * other.z;
     }
 
-    /// @brief intersection point between line and triangle
-    /// @param la
-    /// @param lb
-    /// @param plane
-    /// @return intersection point
+    /// @brief intersection point between line segment and triangle
+    /// @param la line point
+    /// @param lb line point
+    /// @param p0 triangle point
+    /// @param p1 traingle point
+    /// @param p2 trianglr point
+    /// @return intersection point, invalid if no intersection
     /// https://en.wikipedia.org/wiki/Line%E2%80%93plane_intersection#Parametric_form
-
     static cxyz intersectLineTriangle(
         const cxyz &la, const cxyz &lb,
         const cxyz &p0, const cxyz &p1, const cxyz &p2)
@@ -75,12 +77,6 @@ public:
         double u = crossu.dot(lap0) / divisor;
         double v = crossv.dot(lap0) / divisor;
 
-        std::cout 
-            << "t " << t
-            << " u " << u
-            << " v " << v
-            << "\n";
-
         // check that line intersects triangle
         if (t >= 0 && t <= 1)
             if (u >= 0 && u <= 1)
@@ -92,7 +88,23 @@ public:
                             la.y + t * (lb.y - la.y),
                             la.z + t * (lb.z - la.z));
 
-        std::cout << "NO intersection\n";
+        // no intersection, return default, invalid point
         return cxyz();
+    }
+
+    static bool unitTest()
+    {
+        cxyz t1(0, 0, 0), t2(1, 0, 0), t3(1, 1, 0);
+        cxyz ap(0.7, 0.7, 0.5), outer(0.7, 0.7, -10);
+        cxyz intersect = cxyz::intersectLineTriangle(
+            ap, outer,
+            t1, t2, t3);
+        if( fabs(0.7 - intersect.x) > 0.01 )
+            return false;
+        if( fabs(0.7 - intersect.y) > 0.01 )
+            return false;
+        if( fabs(0 - intersect.z) > 0.01 )
+            return false;
+        return true;
     }
 };

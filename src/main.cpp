@@ -30,11 +30,11 @@ private:
 
 main()
 {
-    cxyz t1(0,0,0), t2(1,0,0), t3(1,1,0);
-    cxyz ap(0.7,0.7,0.5), outer(0.7,0.7,-10);
-    cxyz intersect = cxyz::intersectLineTriangle(
-        ap, outer,
-        t1, t2, t3 );
+    if( ! cxyz::unitTest() )
+    {
+        std::cout << "unit test failed\n";
+        exit(1);
+    }
 
     cGUI theGUI;
     return 0;
