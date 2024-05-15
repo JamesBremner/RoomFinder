@@ -24,7 +24,7 @@ OBJ_starter = \
 
 ### COMPILE
 
-$(ODIR)/%.o: %.cpp cxyz.h
+$(ODIR)/%.o: %.cpp cxyz.h cBuilding.h
 	g++ $< \
 	-c -o $@  $(INCS) $(CCflags)
 

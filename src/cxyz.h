@@ -1,5 +1,8 @@
-/// @brief 3D point or vector
+
 #include <cfloat>
+#include <set>
+
+/// @brief 3D point or vector
 class cxyz
 {
 public:
@@ -55,6 +58,13 @@ public:
                y * other.y +
                z * other.z;
     }
+    double dist2(const cxyz &other) const
+    {
+        double dx = x - other.x;
+        double dy = y - other.y;
+        double dz = z - other.z;
+        return dx * dx + dy * dy + dz * dz;
+    }
 
     /// @brief intersection point between line segment and triangle
     /// @param la line point
@@ -92,6 +102,58 @@ public:
         return cxyz();
     }
 
+    bool operator==(const cxyz &other) const
+    {
+        const double delta = 1;
+        return !(
+            fabs(x - other.x) < delta &&
+            fabs(y - other.y) < delta &&
+            fabs(z - other.z) < delta);
+    }
+    bool operator<(const cxyz &other) const
+    {
+        if (*this == other)
+            return false;
+        const double delta = 0.1;
+        if (
+            other.x - x > delta &&
+            other.y - y > delta &&
+            other.z - z > delta)
+            return true;
+        return false;
+    }
+
+    std::string text() const
+    {
+        std::stringstream ss;
+        ss << x << " " << y << " " << z;
+        return ss.str();
+    }
+
+    /// @brief convert polar to cartesian coords
+    /// @param r distance from origin
+    /// @param alpha angle from X in XY plane
+    /// @param polar angle from XY plane
+    /// @return cartesian
+    ///
+    /// X-axis points to left
+    /// Y-axis points to top
+    /// Z-axis points to distance behind XY plane
+    ///
+    /// start with V0 ,vector on X-axis
+    /// rotate V0 clockwise for alpha radians, viewed from Y, towards Z staying in XZ plane to get V1 vector
+    /// rotate V1 towards Y, away from XZ plane to get VP vector
+    /// point is r distance along VP from origin 
+
+    static cxyz polar2cart(double r, double alpha, double polar)
+    {
+        return cxyz(
+            r * cos(polar) * cos(alpha),
+            r * cos(polar) * sin(alpha),
+            r * sin(polar));
+
+    }
+
     static bool unitTest()
     {
         cxyz t1(0, 0, 0), t2(1, 0, 0), t3(1, 1, 0);
@@ -99,12 +161,20 @@ public:
         cxyz intersect = cxyz::intersectLineTriangle(
             ap, outer,
             t1, t2, t3);
-        if( fabs(0.7 - intersect.x) > 0.01 )
+        if (fabs(0.7 - intersect.x) > 0.01)
             return false;
-        if( fabs(0.7 - intersect.y) > 0.01 )
+        if (fabs(0.7 - intersect.y) > 0.01)
             return false;
-        if( fabs(0 - intersect.z) > 0.01 )
+        if (fabs(0 - intersect.z) > 0.01)
             return false;
+
+        cxyz p = polar2cart(1, 0, 0);
+        std::cout << p.text() << "\n";
+        p = polar2cart(1, 0, M_PI / 4);
+        std::cout << p.text() << "\n";
+        p = polar2cart(1, 0, M_PI / 2);
+        std::cout << p.text() << "\n";
+
         return true;
     }
 };
