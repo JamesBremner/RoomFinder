@@ -105,7 +105,7 @@ public:
     bool operator==(const cxyz &other) const
     {
         const double delta = 1;
-        return !(
+        return (
             fabs(x - other.x) < delta &&
             fabs(y - other.y) < delta &&
             fabs(z - other.z) < delta);
@@ -143,7 +143,7 @@ public:
     /// start with V0 ,vector on X-axis
     /// rotate V0 clockwise for alpha radians, viewed from Y, towards Z staying in XZ plane to get V1 vector
     /// rotate V1 towards Y, away from XZ plane to get VP vector
-    /// point is r distance along VP from origin 
+    /// point is r distance along VP from origin
 
     static cxyz polar2cart(double r, double alpha, double polar)
     {
@@ -151,30 +151,8 @@ public:
             r * cos(polar) * cos(alpha),
             r * cos(polar) * sin(alpha),
             r * sin(polar));
-
     }
 
-    static bool unitTest()
-    {
-        cxyz t1(0, 0, 0), t2(1, 0, 0), t3(1, 1, 0);
-        cxyz ap(0.7, 0.7, 0.5), outer(0.7, 0.7, -10);
-        cxyz intersect = cxyz::intersectLineTriangle(
-            ap, outer,
-            t1, t2, t3);
-        if (fabs(0.7 - intersect.x) > 0.01)
-            return false;
-        if (fabs(0.7 - intersect.y) > 0.01)
-            return false;
-        if (fabs(0 - intersect.z) > 0.01)
-            return false;
-
-        cxyz p = polar2cart(1, 0, 0);
-        std::cout << p.text() << "\n";
-        p = polar2cart(1, 0, M_PI / 4);
-        std::cout << p.text() << "\n";
-        p = polar2cart(1, 0, M_PI / 2);
-        std::cout << p.text() << "\n";
-
-        return true;
-    }
+    static bool unitTest();
+    
 };
