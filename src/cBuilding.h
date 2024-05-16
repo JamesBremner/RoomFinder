@@ -1,62 +1,53 @@
+#include <string>
+#include <sstream>
+#include <iostream>
+#include <vector>
+#define _USE_MATH_DEFINES
+#include <cmath>
+#include "cxyz.h"
 
+class cTriangle
+{
+public:
+    std::vector<cxyz> myP;
 
-typedef std::vector<cxyz> triangle_t;
+    bool operator==(const cTriangle &other) const
+    {
+        return (
+            myP[0] == other.myP[0] &&
+            myP[1] == other.myP[1] &&
+            myP[2] == other.myP[2]);
+    }
+};
 
 class cBuild
 {
 public:
-    std::vector<triangle_t> myTriangles;       // all the triangles
-    std::vector<triangle_t> mySelectTriangles; // triangles selected for hull
+    std::vector<cTriangle> myTriangles;       // all the triangles
+    std::vector<cTriangle> mySelectTriangles; // triangles selected for hull
 
-    void add(const triangle_t &t)
+    /// @brief Add triangle to building
+    /// @param t tiangle
+    void add(const cTriangle &t)
     {
         myTriangles.push_back(t);
     }
 
-    void selectHull(cxyz ap)
+    /// @brief add triangle to building
+    /// @param vp traingle points
+    void add( const std::vector<cxyz>& vp )
     {
-        // loop over triangles
-
-        for (auto &t : myTriangles)
-        {
-            // Loop over rays from starting point in all directions
-
-            for (cxyz r : destRays(ap))
-            {
-                // check for intersection
-                if (cxyz::intersectLineTriangle(
-                        ap, r,
-                        t[0], t[1], t[2])
-                        .isValid())
-                {
-                    mySelectTriangles.push_back(t);
-                    break;
-                }
-            }
-        }
+        cTriangle t;
+        t.myP = vp;
+        add( t );
     }
+    
+    /// @brief select hull around air point
+    /// @param ap air point
+    void selectHull(cxyz ap);
+
+    static bool unitTest();
 
 private:
-    std::vector<cxyz> destRays(cxyz ap)
-    {
-        const double dist = 1e6;
-        std::vector<cxyz> ret;
-
-        double inc = M_PI / 4;
-
-        for (double alpha = 0; alpha < 2 * M_PI; alpha += inc)
-        {
-            for (double polar = 0; polar < 2 * M_PI; polar += inc)
-            {
-                // cxyz p = cxyz::polar2cart(dist, alpha, polar) + ap;
-                // std::cout << alpha << " " << polar
-                //           << " => " << p.x << " " << p.y << " " << p.z << "\n";
-
-                ret.push_back(cxyz::polar2cart(dist, alpha, polar));
-            }
-            std::cout << "\n";
-        }
-
-        return ret;
-    }
+    std::vector<cxyz> destRays(cxyz ap);
 };

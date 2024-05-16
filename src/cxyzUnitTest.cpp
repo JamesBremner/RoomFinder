@@ -3,6 +3,7 @@
 #include <sstream>
 #define _USE_MATH_DEFINES
 #include <cmath>
+#include <vector>
 #include "cxyz.h"
 
 bool cxyz::unitTest()
@@ -11,7 +12,7 @@ bool cxyz::unitTest()
         cxyz ap(0.7, 0.7, 0.5), outer(0.7, 0.7, -10);
         cxyz intersect = cxyz::intersectLineTriangle(
             ap, outer,
-            t1, t2, t3);
+            {t1, t2, t3});
         if (fabs(0.7 - intersect.x) > 0.01)
             return false;
         if (fabs(0.7 - intersect.y) > 0.01)

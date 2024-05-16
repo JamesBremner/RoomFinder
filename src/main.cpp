@@ -61,6 +61,11 @@ main()
         std::cout << "unit test failed\n";
         exit(1);
     }
+    if (!cBuild::unitTest())
+    {
+        std::cout << "unit test failed\n";
+        exit(1);
+    }
 
     cBuild B;
     generateUnitCube( B );

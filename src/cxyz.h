@@ -1,4 +1,5 @@
 
+#pragma once
 #include <cfloat>
 #include <set>
 
@@ -74,19 +75,17 @@ public:
     /// @brief intersection point between line segment and triangle
     /// @param la line point
     /// @param lb line point
-    /// @param p0 triangle point
-    /// @param p1 traingle point
-    /// @param p2 triangle point
+    /// @param tr triangle points
     /// @return intersection point, invalid if no intersection
     /// https://en.wikipedia.org/wiki/Line%E2%80%93plane_intersection#Parametric_form
     static cxyz intersectLineTriangle(
         const cxyz &la, const cxyz &lb,
-        const cxyz &p0, const cxyz &p1, const cxyz &p2)
+        const std::vector<cxyz> &tr)
     {
-        cxyz crossall = p0.vect(p1).cross(p0.vect(p2));
-        cxyz crossu = p0.vect(p2).cross(lb.vect(la));
-        cxyz crossv = lb.vect(la).cross(p0.vect(p1));
-        cxyz lap0(la.x - p0.x, la.y - p0.y, la.z - p0.z);
+        cxyz crossall = tr[0].vect(tr[1]).cross(tr[0].vect(tr[2]));
+        cxyz crossu = tr[0].vect(tr[2]).cross(lb.vect(la));
+        cxyz crossv = lb.vect(la).cross(tr[0].vect(tr[1]));
+        cxyz lap0(la.x - tr[0].x, la.y - tr[0].y, la.z - tr[0].z);
         double divisor = lb.vect(la).dot(crossall);
         double t = crossall.dot(lap0) / divisor;
         double u = crossu.dot(lap0) / divisor;
