@@ -20,6 +20,11 @@ public:
     {
     }
 
+    bool isValid() const
+    {
+        return ( x != -DBL_MAX );
+    }
+
     /// @brief vector from this point to other
     /// @param other
     /// @return
@@ -71,7 +76,7 @@ public:
     /// @param lb line point
     /// @param p0 triangle point
     /// @param p1 traingle point
-    /// @param p2 trianglr point
+    /// @param p2 triangle point
     /// @return intersection point, invalid if no intersection
     /// https://en.wikipedia.org/wiki/Line%E2%80%93plane_intersection#Parametric_form
     static cxyz intersectLineTriangle(
@@ -102,6 +107,10 @@ public:
         return cxyz();
     }
 
+    cxyz operator+(const cxyz& other)
+    {
+        return cxyz( x+other.x,y+other.y,z+other.z);
+    }
     bool operator==(const cxyz &other) const
     {
         const double delta = 1;
