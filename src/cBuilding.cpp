@@ -65,13 +65,23 @@ std::vector<cxyz> cBuild::destRays(cxyz ap)
 
             ret.push_back(cxyz::polar2cart(dist, alpha, polar));
         }
-        std::cout << "\n";
+        //std::cout << "\n";
     }
 
     return ret;
 }
+std::string cBuild::textRoom() const
+{
+    std::stringstream ss;
+    for( auto& t : mySelectTriangles )
+        ss << t.text() << "\n";
+    return ss.str();
+}
 bool cBuild::unitTest()
 {
+    if (!cxyz::unitTest())
+        return false;
+
     // construct double wall
     cBuild B;
     B.add({cxyz(0, 0, 1), cxyz(1, 0, 1), cxyz(1, 1, 1)});

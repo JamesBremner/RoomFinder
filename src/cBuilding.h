@@ -18,6 +18,16 @@ public:
             myP[1] == other.myP[1] &&
             myP[2] == other.myP[2]);
     }
+    std::string text() const
+    {
+        if( myP.size() < 3 )
+            return "";
+        std::stringstream ss;
+        ss << myP[0].text() <<", "
+            << myP[1].text() << ", "
+            << myP[2].text();
+        return ss.str();
+    }
 };
 
 class cBuild
@@ -45,6 +55,8 @@ public:
     /// @brief select hull around air point
     /// @param ap air point
     void selectHull(cxyz ap);
+
+    std::string textRoom() const;
 
     static bool unitTest();
 

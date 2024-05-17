@@ -32,7 +32,7 @@ $(ODIR)/%.o: %.cpp cxyz.h cBuilding.h
 
 starter: $(OBJ_starter)
 	g++ $(OPT) \
-	-o bin/starter.exe $^  \
+	-o bin/roomfinder.exe $^  \
 	$(static_link_flags) $(LIBS)
 
 .PHONY: clean

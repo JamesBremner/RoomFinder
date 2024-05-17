@@ -56,11 +56,7 @@ B.add({cxyz(0,0,1),cxyz(0,1,1),cxyz(1,1,1)});
 
 main()
 {
-    if (!cxyz::unitTest())
-    {
-        std::cout << "unit test failed\n";
-        exit(1);
-    }
+
     if (!cBuild::unitTest())
     {
         std::cout << "unit test failed\n";
@@ -70,6 +66,7 @@ main()
     cBuild B;
     generateUnitCube( B );
     B.selectHull( cxyz( 0.5,0.5,0.5 ));
+    std::cout << B.textRoom();
 
     cGUI theGUI;
     return 0;
