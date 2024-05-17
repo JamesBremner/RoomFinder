@@ -53,7 +53,7 @@ std::vector<cxyz> cBuild::destRays(cxyz ap)
     const double dist = 1e6;
     std::vector<cxyz> ret;
 
-    double inc = M_PI / 4;
+    double inc = M_PI / 8;
 
     for (double alpha = 0; alpha < 2 * M_PI; alpha += inc)
     {
@@ -65,7 +65,7 @@ std::vector<cxyz> cBuild::destRays(cxyz ap)
 
             ret.push_back(cxyz::polar2cart(dist, alpha, polar));
         }
-        //std::cout << "\n";
+        // std::cout << "\n";
     }
 
     return ret;
@@ -73,10 +73,61 @@ std::vector<cxyz> cBuild::destRays(cxyz ap)
 std::string cBuild::textRoom() const
 {
     std::stringstream ss;
-    for( auto& t : mySelectTriangles )
+    for (auto &t : mySelectTriangles)
         ss << t.text() << "\n";
     return ss.str();
 }
+
+void cBuild::genOrthoPanel(const cxyz &p1, const cxyz &p2)
+{
+    const double delta = 0.01;
+    if (fabs(p1.x - p2.x) < delta)
+    {
+        add({cxyz(p1.x, p1.y, p1.z), cxyz(p1.x, p1.y, p2.z), cxyz(p1.x, p2.y, p2.z)});
+        add({cxyz(p1.x, p1.y, p1.z), cxyz(p1.x, p2.y, p1.z), cxyz(p1.x, p2.y, p2.z)});
+    }
+    else if (fabs(p1.y - p2.y) < delta)
+    {
+        add({cxyz(p1.x, p1.y, p1.z), cxyz(p1.x, p1.y, p2.z), cxyz(p2.x, p1.y, p2.z)});
+        add({cxyz(p1.x, p1.y, p1.z), cxyz(p2.x, p1.y, p1.z), cxyz(p2.x, p1.y, p2.z)});
+    }
+    else if (fabs(p1.z - p2.z) < delta)
+    {
+        add({cxyz(p1.x, p1.y, p1.z), cxyz(p1.x, p2.y, p1.z), cxyz(p2.x, p2.y, p1.z)});
+        add({cxyz(p1.x, p1.y, p1.z), cxyz(p2.x, p1.y, p1.z), cxyz(p2.x, p2.y, p1.z)});
+    }
+    else
+    {
+        throw std::runtime_error(
+            "cBuild::genOrthoPanel bad parameter");
+    }
+}
+
+void cBuild::genDoubleWalledUnitCube()
+{
+    myTriangles.clear();
+
+    // front wall
+    genOrthoPanel(cxyz(0, 0, 0), cxyz(1, 1, 0));
+    genOrthoPanel(cxyz(0, 0, -0.1), cxyz(1, 1, -0.1));
+
+    // back wall
+    genOrthoPanel(cxyz(0, 0, 1), cxyz(1, 1, 1));
+    genOrthoPanel(cxyz(0, 0, 1.1), cxyz(1, 1, 1.1));
+
+    // side walls
+    genOrthoPanel(cxyz(0, 0, 0), cxyz(0, 1, 1));
+    genOrthoPanel(cxyz(-0.1, 0, 0), cxyz(-0.1, 1, 1));
+    genOrthoPanel(cxyz(1, 0, 0), cxyz(1, 1, 1));
+    genOrthoPanel(cxyz(1.1, 0, 0), cxyz(1.1, 1, 1));
+
+    // floor
+    genOrthoPanel(cxyz(0, 0, 0), cxyz(1, 0, 1));
+
+    // ceiling
+    genOrthoPanel(cxyz(0, 1, 0), cxyz(1, 1, 1));
+}
+
 bool cBuild::unitTest()
 {
     if (!cxyz::unitTest())
@@ -102,6 +153,30 @@ bool cBuild::unitTest()
         return false;
     if (B.mySelectTriangles[0].myP[0].z != 10)
         return false;
+
+    B.genDoubleWalledUnitCube();
+    B.selectHull(cxyz(.5, .5, .5));
+    //B.textRoom();
+
+    // check that every cube face selected exactly once
+    // cube has 6 faces, each face has 2 triangles
+    if (B.mySelectTriangles.size() != 12)
+        return false;
+
+    // check that nearest wall surface always selected
+    for (auto &t : B.mySelectTriangles)
+    {
+        for (int it = 0; it < 3; it++)
+        {
+                if ((int)(t.myP[it].x * 100) % 100)
+                    return false;
+                if ((int)(t.myP[it].y * 100) % 100)
+                    return false;
+                if ((int)(t.myP[it].y * 100) % 100)
+                    return false;
+
+        }
+    }
 
     return true;
 }

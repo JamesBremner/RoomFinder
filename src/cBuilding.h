@@ -58,6 +58,9 @@ public:
 
     std::string textRoom() const;
 
+    void genOrthoPanel( const cxyz & p1, const cxyz & p2 );
+    void genDoubleWalledUnitCube();
+
     static bool unitTest();
 
 private:
