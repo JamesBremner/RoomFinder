@@ -1,4 +1,64 @@
+#include <fstream>
 #include "cBuilding.h"
+
+    bool cTriangle::operator==(const cTriangle &other) const
+    {
+        return (
+            myP[0] == other.myP[0] &&
+            myP[1] == other.myP[1] &&
+            myP[2] == other.myP[2]);
+    }
+    std::string cTriangle::text() const
+    {
+        if (myP.size() < 3)
+            return "";
+        std::stringstream ss;
+        ss << myP[0].text() << ", "
+           << myP[1].text() << ", "
+           << myP[2].text();
+        return ss.str();
+    }
+    std::string cTriangle::dxf() const
+    {
+        const std::string LWPOLYLINE =
+            "0\n"
+            "LWPOLYLINE\n"
+            "5\n"
+            "7C\n"
+            "330\n"
+            "1F\n"
+            "100\n"
+            "AcDbEntity\n"
+            "8\n"
+            "freze1\n"
+            "100\n"
+            "AcDbPolyline\n"
+            " 90\n"
+            "4\n" // vertex count
+            " 70\n"
+            "1\n" // closed
+            " 43\n"
+            "0.0\n";
+
+        if (myP.size() < 3)
+            return "";
+        std::stringstream ss;
+        ss
+            << LWPOLYLINE
+            << " 10\n"
+            << myP[0].x << "\n"
+            << " 20\n"
+            << myP[0].y << "\n"
+            << " 10\n"
+            << myP[1].x << "\n"
+            << " 20\n"
+            << myP[1].y << "\n"
+            << " 10\n"
+            << myP[2].x << "\n"
+            << " 20\n"
+            << myP[2].y << "\n";
+        return ss.str();
+    }
 
 void cBuild::selectHull(cxyz ap)
 {
@@ -75,6 +135,23 @@ std::string cBuild::textRoom() const
     std::stringstream ss;
     for (auto &t : mySelectTriangles)
         ss << t.text() << "\n";
+    return ss.str();
+}
+std::string cBuild::dxfRoom() const
+{
+    std::stringstream ss;
+    ss << "2\n"
+          "ENTITIES\n";
+
+    for (auto &t : mySelectTriangles)
+    {
+        ss << t.dxf();
+    }
+
+    ss << "ENDSEC\n"
+          "0\n"
+          "EOF\n";
+
     return ss.str();
 }
 
@@ -156,7 +233,7 @@ bool cBuild::unitTest()
 
     B.genDoubleWalledUnitCube();
     B.selectHull(cxyz(.5, .5, .5));
-    //B.textRoom();
+    // B.textRoom();
 
     // check that every cube face selected exactly once
     // cube has 6 faces, each face has 2 triangles
@@ -168,15 +245,17 @@ bool cBuild::unitTest()
     {
         for (int it = 0; it < 3; it++)
         {
-                if ((int)(t.myP[it].x * 100) % 100)
-                    return false;
-                if ((int)(t.myP[it].y * 100) % 100)
-                    return false;
-                if ((int)(t.myP[it].y * 100) % 100)
-                    return false;
-
+            if ((int)(t.myP[it].x * 100) % 100)
+                return false;
+            if ((int)(t.myP[it].y * 100) % 100)
+                return false;
+            if ((int)(t.myP[it].y * 100) % 100)
+                return false;
         }
     }
+
+    std::ofstream ofs("room.dxf");
+    ofs << B.dxfRoom();
 
     return true;
 }
