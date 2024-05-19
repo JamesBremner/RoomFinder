@@ -23,16 +23,6 @@
         const std::string LWPOLYLINE =
             "0\n"
             "LWPOLYLINE\n"
-            "5\n"
-            "7C\n"
-            "330\n"
-            "1F\n"
-            "100\n"
-            "AcDbEntity\n"
-            "8\n"
-            "freze1\n"
-            "100\n"
-            "AcDbPolyline\n"
             " 90\n"
             "4\n" // vertex count
             " 70\n"
