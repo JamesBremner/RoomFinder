@@ -1,54 +1,61 @@
 #include <fstream>
 #include "cBuilding.h"
 
-    bool cTriangle::operator==(const cTriangle &other) const
-    {
-        return (
-            myP[0] == other.myP[0] &&
-            myP[1] == other.myP[1] &&
-            myP[2] == other.myP[2]);
-    }
-    std::string cTriangle::text() const
-    {
-        if (myP.size() < 3)
-            return "";
-        std::stringstream ss;
-        ss << myP[0].text() << ", "
-           << myP[1].text() << ", "
-           << myP[2].text();
-        return ss.str();
-    }
-    std::string cTriangle::dxf() const
-    {
-        const std::string LWPOLYLINE =
-            "0\n"
-            "LWPOLYLINE\n"
-            " 90\n"
-            "4\n" // vertex count
-            " 70\n"
-            "1\n" // closed
-            " 43\n"
-            "0.0\n";
+bool cTriangle::operator==(const cTriangle &other) const
+{
+    return (
+        myP[0] == other.myP[0] &&
+        myP[1] == other.myP[1] &&
+        myP[2] == other.myP[2]);
+}
+std::string cTriangle::text() const
+{
+    if (myP.size() < 3)
+        return "";
+    std::stringstream ss;
+    ss << myP[0].text() << ", "
+       << myP[1].text() << ", "
+       << myP[2].text();
+    return ss.str();
+}
+std::string cTriangle::dxf(cCamera &camera) const
+{
+    const std::string LWPOLYLINE =
+        "0\n"
+        "LWPOLYLINE\n"
+        " 90\n"
+        "4\n" // vertex count
+        " 70\n"
+        "1\n" // closed
+        " 43\n"
+        "0.0\n";
 
-        if (myP.size() < 3)
-            return "";
-        std::stringstream ss;
-        ss
-            << LWPOLYLINE
-            << " 10\n"
-            << myP[0].x << "\n"
-            << " 20\n"
-            << myP[0].y << "\n"
-            << " 10\n"
-            << myP[1].x << "\n"
-            << " 20\n"
-            << myP[1].y << "\n"
-            << " 10\n"
-            << myP[2].x << "\n"
-            << " 20\n"
-            << myP[2].y << "\n";
-        return ss.str();
-    }
+    if (myP.size() < 3)
+        return "";
+    std::stringstream ss;
+    ss << LWPOLYLINE;
+
+    cxyz pc = camera.view(myP[0]);
+    ss
+        << " 10\n"
+        << pc.x << "\n"
+        << " 20\n"
+        << pc.y << "\n";
+    pc = camera.view(myP[1]);
+    ss
+        << " 10\n"
+        << pc.x << "\n"
+        << " 20\n"
+        << pc.y << "\n";
+    pc = camera.view(myP[2]);
+    ss
+        << " 10\n"
+        << pc.x << "\n"
+        << " 20\n"
+        << pc.y << "\n";
+
+    return ss.str();
+}
 
 void cBuild::selectHull(cxyz ap)
 {
@@ -127,15 +134,19 @@ std::string cBuild::textRoom() const
         ss << t.text() << "\n";
     return ss.str();
 }
-std::string cBuild::dxfRoom() const
+std::string dxf( const std::vector<cTriangle>& vt)
 {
+    cCamera Camera;
+    Camera.set(
+        cxyz(0, 0, 0), cxyz(-10, 0, 10), cxyz(0, 10, 0));
+
     std::stringstream ss;
     ss << "2\n"
           "ENTITIES\n";
 
-    for (auto &t : mySelectTriangles)
+    for (auto &t : vt)
     {
-        ss << t.dxf();
+        ss << t.dxf(Camera);
     }
 
     ss << "ENDSEC\n"
@@ -143,6 +154,14 @@ std::string cBuild::dxfRoom() const
           "EOF\n";
 
     return ss.str();
+}
+std::string cBuild::dxfRoom() const
+{
+    return dxf( mySelectTriangles );
+}
+std::string cBuild::dxfBuilding() const
+{
+    return dxf( myTriangles );
 }
 
 void cBuild::genOrthoPanel(const cxyz &p1, const cxyz &p2)
@@ -246,6 +265,10 @@ bool cBuild::unitTest()
 
     std::ofstream ofs("room.dxf");
     ofs << B.dxfRoom();
+    std::ofstream ofsb("build.dxf");
+    ofsb << B.dxfBuilding();
+
+    cCamera::unitTest();
 
     return true;
 }

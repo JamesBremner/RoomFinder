@@ -30,5 +30,20 @@ bool cxyz::unitTest()
         if (!(cxyz(0, 0, 1) == p))
             return false;
 
+// {
+//         cxyz position(0,0,-10), target(0,0,10),up(10,10,0);
+//         cxyz t4( 0,1,0);
+//         cCamera C;
+//         C.set(position, target, up );
+//         std::cout<< C.view(t4).text() << "\n";
+// }
+// {
+//         cxyz position(0,0,-10), target(0,-10,10),up(10,0,0);
+//         cxyz t4( 0,1,0);
+//         cCamera C;
+//         C.set(position, target, up );
+//         std::cout<< C.view(t4).text() << "\n";
+// }
+
         return true;
     }

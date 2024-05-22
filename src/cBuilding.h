@@ -15,7 +15,7 @@ public:
 
     std::string text() const;
 
-    std::string dxf() const;
+    std::string dxf(cCamera& camera ) const;
 
 };
 
@@ -47,6 +47,7 @@ public:
 
     std::string textRoom() const;
     std::string dxfRoom() const;
+    std::string dxfBuilding() const;
 
     void genOrthoPanel(const cxyz &p1, const cxyz &p2);
     void genDoubleWalledUnitCube();

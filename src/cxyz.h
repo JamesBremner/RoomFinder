@@ -1,7 +1,10 @@
 
 #pragma once
+#include <string>
+#include <sstream>
 #include <cfloat>
 #include <set>
+#include <vector>
 
 /// @brief 3D point or vector
 class cxyz
@@ -23,7 +26,7 @@ public:
 
     bool isValid() const
     {
-        return ( x != -DBL_MAX );
+        return (x != -DBL_MAX);
     }
 
     /// @brief vector from this point to other
@@ -50,7 +53,7 @@ public:
             p0.z + p01.z + p02.z);
     }
 
-    cxyz cross(const cxyz &other)
+    cxyz cross(const cxyz &other) const
     {
         return cxyz(
             y * other.z - z * other.y,
@@ -58,7 +61,7 @@ public:
             x * other.y - y * other.x);
     }
 
-    double dot(const cxyz &other)
+    double dot(const cxyz &other) const
     {
         return x * other.x +
                y * other.y +
@@ -106,9 +109,27 @@ public:
         return cxyz();
     }
 
-    cxyz operator+(const cxyz& other)
+    double length();
+    void normal();
+
+    /// @brief
+    /// @return
+    /// https://en.wikipedia.org/wiki/Graphics_pipeline#Camera_Transformation
+
+    // std::vector<cxyz> cameraMatrix(
+    //     const cxyz& position,
+    //     const cxyz& target,
+    //     const cxyz& up    );
+
+    // void camera( const std::vector<cxyz>& cameraMatrix )
+
+    cxyz operator+(const cxyz &other) const
     {
-        return cxyz( x+other.x,y+other.y,z+other.z);
+        return cxyz(x + other.x, y + other.y, z + other.z);
+    }
+    cxyz operator-(const cxyz &other) const
+    {
+        return cxyz(x - other.x, y - other.y, z - other.z);
     }
     bool operator==(const cxyz &other) const
     {
@@ -162,5 +183,22 @@ public:
     }
 
     static bool unitTest();
-    
+};
+
+/// https://en.wikipedia.org/wiki/Graphics_pipeline#Camera_Transformation
+class cCamera
+{
+    std::vector<cxyz> Matrix;
+    cxyz myPosition;
+
+public:
+    cCamera()
+    : Matrix(3)
+    {}
+    void set(
+        const cxyz &position,
+        const cxyz &target,
+        const cxyz &up);
+    cxyz view(const cxyz &p);
+    static bool unitTest();
 };
